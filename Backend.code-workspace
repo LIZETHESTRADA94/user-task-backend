@@ -1,0 +1,28 @@
+{
+	"folders": [
+		{
+			"name": "config-server",
+			"path": "config-server"
+		},
+		{
+			"name": "eureka-server",
+			"path": "eureka-server"
+		},
+		{
+			"name": "gateway-service",
+			"path": "gateway-service"
+		},
+		{
+			"name": "task-service",
+			"path": "task-service"
+		},
+		{
+			"name": "user-service",
+			"path": "user-service"
+		}
+	],
+	"settings": {
+		"java.configuration.updateBuildConfiguration": "automatic",
+		"java.compile.nullAnalysis.mode": "automatic"
+	}
+}
