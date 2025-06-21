@@ -22,11 +22,22 @@ public class UserUtil {
             throw new InvalidUserException("Nombre vacío");
         }
 
+        if (userDTO.getEmail() == null || !StringUtils.hasLength(userDTO.getEmail().trim())) {
+            throw new InvalidUserException("Email vacío");
+        }
+
+        if (userDTO.getRole() == null || !StringUtils.hasLength(userDTO.getRole().trim())) {
+            throw new InvalidUserException("Rol vacío");
+        }
+
+        if (userDTO.getId() == null && (userDTO.getPassword() == null || !StringUtils.hasLength(userDTO.getPassword().trim()))) {
+            throw new InvalidUserException("Contraseña vacía");
+        }
 
         if (
-            userDTO.getEmail() != null
-            && StringUtils.hasLength(userDTO.getEmail().trim())
-            && !isValidEmail(userDTO.getEmail().trim())
+            userDTO.getEmail() == null
+            || !StringUtils.hasLength(userDTO.getEmail().trim())
+            || !isValidEmail(userDTO.getEmail().trim())
         ) {
             throw new InvalidUserException("Formato de email es incorrecto");
         }

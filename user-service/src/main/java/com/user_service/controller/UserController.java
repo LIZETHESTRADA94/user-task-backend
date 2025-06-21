@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.user_service.model.dto.StatsDTO;
 import com.user_service.model.dto.UserDTO;
 import com.user_service.model.entity.User;
 import com.user_service.service.IUserService;
@@ -48,6 +49,17 @@ public class UserController {
 		}
 	}
 
+	@GetMapping("/by-email")
+	public ResponseEntity<UserDTO> getUser(@RequestParam String email) {
+
+		UserDTO user = service.getUser(email);
+		if (user != null) {
+			return ResponseEntity.ok(user);
+		} else {
+			return ResponseEntity.notFound().build();
+		}
+	}
+
 	@GetMapping("/search")
     public ResponseEntity<List<User>> search(@RequestParam String query) {
 
@@ -58,6 +70,13 @@ public class UserController {
 		} else {
 			return ResponseEntity.ok(Collections.emptyList());
 		}
+	}
+
+	@GetMapping("/stats")
+    public ResponseEntity<StatsDTO> getStats() {
+
+		var statsDto = service.getStats();
+		return ResponseEntity.ok(statsDto);
 	}
 
 	@PostMapping

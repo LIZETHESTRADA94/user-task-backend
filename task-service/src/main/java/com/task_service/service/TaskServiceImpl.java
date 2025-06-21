@@ -3,6 +3,7 @@ package com.task_service.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.task_service.exception.InvalidTaskException;
@@ -33,7 +34,7 @@ public class TaskServiceImpl implements ITaskService {
 
     @Override
     public List<Task> getTasksByUserId(Long userId) {
-        return repository.findByUserId(userId);
+        return repository.findByUserId(userId, Sort.by(Sort.Direction.ASC, "id"));
     }
 
     @Override

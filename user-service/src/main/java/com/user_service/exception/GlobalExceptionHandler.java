@@ -24,7 +24,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, String>> handleUnexpected(Exception ex) {
 
         Map<String, String> error = new HashMap<>();
-        error.put("error", "Error inesperado");
+        error.put("error", "Error inesperado" + ex.getMessage());
 
         return ResponseEntity.status(HttpStatus.SC_INTERNAL_SERVER_ERROR).body(error);
     }

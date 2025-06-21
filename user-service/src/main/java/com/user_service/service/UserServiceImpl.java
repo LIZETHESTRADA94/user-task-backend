@@ -3,9 +3,11 @@ package com.user_service.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.user_service.client.TaskClient;
+import com.user_service.model.dto.StatsDTO;
 import com.user_service.model.dto.TaskDTO;
 import com.user_service.model.dto.UserDTO;
 import com.user_service.model.entity.User;
@@ -21,29 +23,26 @@ public class UserServiceImpl implements IUserService {
     @Autowired
     private TaskClient taskClient;
 
+    @Autowired
+    private IAzureB2CService azureB2CService;
+
     @Override
     public List<User> getAllUsers() { 
-        return repository.findAll(); 
+        return repository.findAll(Sort.by(Sort.Direction.ASC, "id")); 
     }
     
     @Override
     public UserDTO getUser(Long id) {
 
         User user = repository.findById(id).orElse(null);
+        return loaUserDTO(user);
+    }
 
-        if (user != null) {
-            List<TaskDTO> taskDTOs = taskClient.getTasksByUserId(id);
+    @Override
+    public UserDTO getUser(String email) {
 
-            return UserDTO.builder()
-                .id(user.getId())
-                .name(user.getName())
-                .email(user.getEmail())
-                .tasks(taskDTOs)
-                .build();
-
-        } else {
-            return null;
-        }
+        User user = repository.findByEmail(email).orElse(null);
+        return loaUserDTO(user);
     }
 
     @Override
@@ -58,7 +57,10 @@ public class UserServiceImpl implements IUserService {
 
         User user = User.builder()
                 .name(userDTO.getName())
-                .email(userDTO.getEmail()).build();
+                .email(userDTO.getEmail())
+                .role(userDTO.getRole()).build();
+
+        azureB2CService.createUser(userDTO.getName(), userDTO.getEmail(), userDTO.getPassword());
 
         return repository.save(user);
     }
@@ -75,6 +77,7 @@ public class UserServiceImpl implements IUserService {
 
         user.setName(userDTO.getName());
         user.setEmail(userDTO.getEmail());
+        user.setRole(userDTO.getRole());
 
         return repository.save(user);
     }
@@ -87,6 +90,32 @@ public class UserServiceImpl implements IUserService {
             repository.delete(user);
             taskClient.deleteTasksByUserId(user.getId());
 		}
+    }
+
+    @Override
+    public StatsDTO getStats() {
+
+        return StatsDTO.builder()
+            .total(repository.count())
+            .build();
+    }
+
+    private UserDTO loaUserDTO(User user) {
+
+        if (user != null) {
+            List<TaskDTO> taskDTOs = taskClient.getTasksByUserId(user.getId());
+
+            return UserDTO.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
+                .role(user.getRole())
+                .tasks(taskDTOs)
+                .build();
+
+        } else {
+            return null;
+        }
     }
 
 }
